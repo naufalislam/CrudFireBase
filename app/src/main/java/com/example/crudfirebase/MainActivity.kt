@@ -1,0 +1,43 @@
+package com.example.crudfirebase
+
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.widget.Button
+import android.widget.Toast
+import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+
+
+
+class MainActivity : AppCompatActivity() {
+    lateinit var ref : DatabaseReference
+    val button: Button = findViewById(R.id.btnSave)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        ref = FirebaseDatabase.getInstance().getReference("USERS")
+
+        button.setOnClickListener {
+            savedata()
+        }
+    }
+    private fun savedata() {
+        val inputNama : TextInputEditText = findViewById(R.id.inputNama)
+        val inputStatus : TextInputEditText = findViewById(R.id.inputStatus)
+
+        val nama  = inputNama.text.toString()
+        val status = inputStatus.text.toString()
+
+        val user = Users(nama,status)
+        val userId = ref.push().key.toString()
+
+        ref.child(userId).setValue(user).addOnCompleteListener {
+            Toast.makeText(this, "Successs",Toast.LENGTH_SHORT).show()
+            inputNama.setText("")
+            inputStatus.setText("")
+        }
+
+    }
+}
